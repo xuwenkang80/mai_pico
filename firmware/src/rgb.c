@@ -20,7 +20,7 @@
 #include "board_defs.h"
 #include "config.h"
 
-#define LED_NUM 12 // 8 buttons, 3 cab, 1 aime
+#define LED_NUM 13 // 8 buttons, 3 cab, 1 banner, 1 aime
 uint32_t rgb_buf[LED_NUM];
 static struct {
     uint32_t color; // current color
@@ -118,7 +118,14 @@ static void drive_led()
     last = now;
 
     for (int i = 0; i < LED_NUM; i++) {
-        int num = i < 8 ? mai_cfg->rgb.per_button : (i < 11 ? mai_cfg->rgb.per_cab : 16);
+        int num = 16; // aime light
+        if (i < 8) {
+            num = mai_cfg->rgb.per_button;
+        } else if (i < 11) {
+            num = mai_cfg->rgb.per_cab;
+        } else if (i < 12) {
+            num = mai_cfg->rgb.per_banner;
+        }
         for (int j = 0; j < num; j++) {
             pio_sm_put_blocking(pio0, 0, rgb_buf[i] << 8u);
         }
@@ -201,9 +208,14 @@ void rgb_set_cab(unsigned index, uint32_t color)
     set_color(8 + index, color, 0);
 }
 
-void rgb_set_aime(uint32_t color)
+void rgb_set_banner(uint32_t color)
 {
     set_color(11, color, 0);
+}
+
+void rgb_set_aime(uint32_t color)
+{
+    set_color(12, color, 0);
 }
 
 void rgb_init()

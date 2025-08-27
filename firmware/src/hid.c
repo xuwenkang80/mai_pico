@@ -6,6 +6,7 @@
 #include "tusb.h"
 #include "usb_descriptors.h"
 #include "button.h"
+#include "rgb.h"
 #include "config.h"
 #include "hid.h"
 
@@ -106,14 +107,27 @@ void hid_update()
 typedef struct __attribute__((packed)) {
     uint8_t report_id;
     uint8_t cmd;
-    uint8_t payload[62];
+    union {
+        struct {
+            uint8_t led;
+            uint8_t gap;
+            uint8_t r1;
+            uint8_t r2;
+            uint8_t g1;
+            uint8_t g2;
+            uint8_t b1;
+            uint8_t b2;
+        };
+        uint32_t outbits;
+        uint8_t payload[62];
+    };
 } hid_output_t;
 
-void hid_proc(const uint8_t *data, uint8_t len)
+void hid_proc(const uint8_t *buffer, uint8_t len)
 {
-    hid_output_t *output = (hid_output_t *)data;
-    if (output->report_id == REPORT_ID_OUTPUT) {
-        switch (output->cmd) {
+    hid_output_t *data = (hid_output_t *)buffer;
+    if (data->report_id == REPORT_ID_OUTPUT) {
+        switch (data->cmd) {
             case 0x01: // Set Timeout
             case 0x02: // Set Sampling Count
                 hid_io4.system_status = 0x30;
@@ -123,11 +137,23 @@ void hid_proc(const uint8_t *data, uint8_t len)
                 hid_io4.chutes[1] = 0;
                 hid_io4.system_status = 0x00;
                 break;
-            case 0x04: // Set General Output
-            case 0x41: // I don't know what this is
+            case 0x04: // General Output
+                // Bit 2: QR Reader P2,
+                // Bit 5: QR Reader P1,
+                // Bit 6: Coin Blocker,
+                // Bit 14: Camera RECORD,
+                // Bit 15: Camera Ring
+                break;
+            case 0x41: // RGB Light
+                if (data->led != 0xfc) {
+                    break;
+                }
+                uint32_t p1_banner = rgb32(data->r1, data->g1, data->b1, false);
+                rgb_set_banner(p1_banner);
+                // Note: p2_banner uses data->r2, data->g2, data->b2
                 break;
             default:
-                printf("USB unknown cmd: %d\n", output->cmd);
+                printf("USB unknown cmd: %d\n", data->cmd);
                 break;
         }
     }

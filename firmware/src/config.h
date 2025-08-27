@@ -13,8 +13,7 @@
 
 typedef struct __attribute__((packed)) {
     struct {
-        uint32_t key_on;
-        uint32_t key_off;
+        uint32_t not_used[2];
         uint8_t level;
     } color;
     struct {
@@ -30,7 +29,8 @@ typedef struct __attribute__((packed)) {
     } hid;
     struct {
         uint8_t per_button;
-        uint8_t per_cab;
+        uint8_t per_cab : 4;
+        uint8_t per_banner : 4;
     } rgb;
     struct {
         uint8_t buttons[12];

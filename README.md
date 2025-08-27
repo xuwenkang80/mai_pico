@@ -29,15 +29,15 @@ This project is the most complex one among all my projects.
 ## About the License
 It's CC-NC. So DIY for yourself and for your friend for free, don't make money from it. And plagiarism that doesn’t even dare to mention the original author is not acceptable. Plase note that pooling orders and group buying for raw materials is acceptable. Selling off any leftover components without profit is also acceptable.
 
-If you're interested in buying from me or some kind of commercial use, please contact me (Discord, QQ group, Wechat group or leave your contact in issue section).
-
-## My Discord Invitation
-https://discord.gg/M8f2PPQFEA
+If you're interested in buying from me or some kind of commercial use, please contact me (Discord, QQ group, Goofish).
+* My Discord Invitation: https://discord.gg/M8f2PPQFEA
+* QQ Group: 854535476
+* Goofish: whowe12345
 
 ## My Other Projects
 You can check out my other cool projects.
 
-<img src="https://github.com/whowechina/popn_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_teeny/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/chu_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/mai_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/diva_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/aic_pico/raw/main/doc/main.gif" height="100px"> <img src="https://github.com/whowechina/groove_pico/raw/main/doc/main.gif" height="100px">  <img src="https://github.com/whowechina/geki_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/musec_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/ju_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/bishi_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/nos_pico/raw/main/doc/main.jpg" height="100px">
+<img src="https://github.com/whowechina/popn_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_teeny/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/chu_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/mai_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/diva_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/aic_pico/raw/main/doc/main.gif" height="100px"> <img src="https://github.com/whowechina/groove_pico/raw/main/doc/main.gif" height="100px">  <img src="https://github.com/whowechina/geki_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/musec_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/ju_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/bishi_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/nos_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/voltex_pico/raw/main/doc/main.jpg" height="100px">
 
 * Popn Pico: https://github.com/whowechina/popn_pico
 * IIDX Pico: https://github.com/whowechina/iidx_pico
@@ -51,7 +51,8 @@ You can check out my other cool projects.
 * Musec Pico: https://github.com/whowechina/musec_pico
 * Ju Pico: https://github.com/whowechina/ju_pico
 * Bishi Pico: https://github.com/whowechina/bishi_pico
-* Bishi Pico: https://github.com/whowechina/nos_pico
+* Nos Pico: https://github.com/whowechina/nos_pico
+* Voltex Pico: https://github.com/whowechina/voltex_pico
 
 ## **Disclaimer** ##
 I made this project in my personal time without any sponsorship. I will continue to improve the project. I have done my best to ensure that everything is accurate and functional, there's always a chance that mistakes may occur. I cannot be held responsible for any loss of your time or money that may result from using this open source project. Thank you for your understanding.
@@ -139,7 +140,6 @@ Before we start, I want to encourage you with some hobbyist builds.
   * Install the cover, each needs 2x M2*5mm screws.  
     <img src="doc/assemble_7.jpg" width="60%">
 
-
 ### Portable Display
   * Resolution: 1920*1080, size: 15.6inch, refresh rate: 120Hz (recommended) or 60Hz, built-in speakers.
   * They're easy to find. Choose cheap or even tiny-flawed ones, they're much cheaper and work just fine.
@@ -153,6 +153,12 @@ Before we start, I want to encourage you with some hobbyist builds.
 
 ### Housing
   * It's your job to design it and make it look nice.
+
+### RGB Light
+  * All RGB lights are daisy-chained in just one WS2812B chain following this order:
+    * [8x Button Nodes] -> [3x Cabinet Nodes] -> [1x Banner Node] -> [1x AIME Node]
+  * You can set chained RGB LED numbers for each node (Button, Cabinet or Banner) using `rgb` command. `0` means ignore the nodes. Note that AIME node supports up to 16 LEDs, and you can't change it.
+  * If two or more RGB LEDs are connected parallelly (sharing the same input), they're considered as one node.
 
 ### Firmware
 * UF2 file is in `Production\Firmware` folder.

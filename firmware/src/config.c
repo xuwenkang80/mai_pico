@@ -16,8 +16,6 @@ mai_cfg_t *mai_cfg;
 
 static mai_cfg_t default_cfg = {
     .color = {
-        .key_on = 0xc0c0c0,
-        .key_off = 0x080808,
         .level = 127,
     },
     .sense = {

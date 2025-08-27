@@ -31,15 +31,15 @@
 ## 关于许可证
 它是 CC-NC 授权。所以你只能给自己和或者免费给你的朋友 DIY，不能利用这个项目赚钱，比如收费的代做，出售整机等，连源作者都不敢提的抄袭或者稍微改改换个名字来打擦边球就更不可以了。注意团购和拼单订购原始元器件是合理的，非盈利的方式卖掉剩余的元器件也是可以接受的。
 
-如果希望找我购买成品或者寻求商用授权，请联系我（Discord，QQ 群，闲鱼，微信群或者在 issue 区留下你的联系方式）。
-
-## 我的 Discord 服务器邀请
-https://discord.gg/M8f2PPQFEA
+如果希望找我购买成品或者获取商用授权，请联系我（Discord，QQ 群，闲鱼）。
+* Discord 服务器邀请：https://discord.gg/M8f2PPQFEA
+* QQ 群：854535476
+* 闲鱼：whowe12345
 
 ## 其他项目
 你也可以查看我其他的酷炫项目。
 
-<img src="https://github.com/whowechina/popn_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_teeny/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/chu_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/mai_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/diva_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/aic_pico/raw/main/doc/main.gif" height="100px"> <img src="https://github.com/whowechina/groove_pico/raw/main/doc/main.gif" height="100px">  <img src="https://github.com/whowechina/geki_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/musec_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/ju_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/bishi_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/nos_pico/raw/main/doc/main.jpg" height="100px">
+<img src="https://github.com/whowechina/popn_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/iidx_teeny/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/chu_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/mai_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/diva_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/aic_pico/raw/main/doc/main.gif" height="100px"> <img src="https://github.com/whowechina/groove_pico/raw/main/doc/main.gif" height="100px">  <img src="https://github.com/whowechina/geki_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/musec_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/ju_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/bishi_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/nos_pico/raw/main/doc/main.jpg" height="100px"> <img src="https://github.com/whowechina/voltex_pico/raw/main/doc/main.jpg" height="100px">
 
 * Popn Pico: https://github.com/whowechina/popn_pico
 * IIDX Pico: https://github.com/whowechina/iidx_pico
@@ -53,7 +53,8 @@ https://discord.gg/M8f2PPQFEA
 * Musec Pico: https://github.com/whowechina/musec_pico
 * Ju Pico: https://github.com/whowechina/ju_pico
 * Bishi Pico: https://github.com/whowechina/bishi_pico
-* Bishi Pico: https://github.com/whowechina/nos_pico
+* Nos Pico: https://github.com/whowechina/nos_pico
+* Voltex Pico: https://github.com/whowechina/voltex_pico
 
 ## **声明** ##
 我在个人业余时间内制作了这个项目（没有任何赞助），并且会持续改进这个项目。我已尽我所能确保所有内容的准确性和功能性，但总有可能出现错误。如果你因使用这个开源项目而造成时间或金钱的损失，我不能负责。感谢你的理解。
@@ -155,6 +156,12 @@ https://discord.gg/M8f2PPQFEA
 
 ### 外壳
   * 设计并使其看起来漂亮是你的工作。
+
+### RGB 灯光
+  * 所有 WS2812 LED 都是串接在一条 RGB 线路上的，顺序如下：
+    * [8x 按钮节点] --> [3x 机框节点] --> [1x 顶灯节点] --> [1x AIME 节点]
+  * 你可以使用 `rgb` 命令为每个节点（按钮、机框或顶灯）设置串联的 RGB LED 数量。设置 `0` 表示忽略该类节点。请注意，AIME 节点支持最多 16 个 LED，且无法更改。
+  * 如果多个 RGB LED 并联（共享相同输入），则视为一个节点。
 
 ### 固件
 * UF2 文件在 `Production\Firmware` 文件夹中。

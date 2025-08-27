@@ -25,10 +25,11 @@
 static void disp_rgb()
 {
     printf("[RGB]\n");
-    printf("  Number per button: %d, number per cab: %d\n",
-            mai_cfg->rgb.per_button, mai_cfg->rgb.per_cab);
-    printf("  Key on: %06lx, off: %06lx\n  Level: %d\n",
-           mai_cfg->color.key_on, mai_cfg->color.key_off, mai_cfg->color.level);
+    printf("  LED Number for Button: %d\n"
+           "  LED Number for Cabinet Light: %d\n"
+           "  LED Number for Banner: %d\n",
+            mai_cfg->rgb.per_button, mai_cfg->rgb.per_cab, mai_cfg->rgb.per_banner);
+    printf("  Level: %d\n", mai_cfg->color.level);
 }
 
 static void print_sense_zone(const char *title, const int8_t *zones, int num)
@@ -157,21 +158,28 @@ void handle_display(int argc, char *argv[])
 
 static void handle_rgb(int argc, char *argv[])
 {
-    const char *usage = "Usage: rgb <1..16> <0..128>\n";
-    if (argc != 2) {
+    const char *usage = "Usage: rgb <per_button> <per_cab> <per_banner>\n"
+                        "  per_button: [0..15] LED number per button\n"
+                        "  per_cab: [0..15] LED number for each cabinet light\n"
+                        "  per_banner: [0..15] LED number for the banner\n";
+    if (argc != 3) {
         printf(usage);
         return;
     }
 
     int per_button = cli_extract_non_neg_int(argv[0], 0);
-    int per_cab = cli_extract_non_neg_int(argv[1], 0);    
-    if ((per_button < 1) || (per_button > 16) || (per_cab > 128)) {
+    int per_cab = cli_extract_non_neg_int(argv[1], 0);
+    int per_banner = cli_extract_non_neg_int(argv[2], 0);
+
+    if ((per_button < 0) || (per_cab < 0) || (per_banner < 0) ||
+        (per_button > 15) || (per_cab > 15) || (per_banner > 15)) {
         printf(usage);
         return;
     }
 
     mai_cfg->rgb.per_button = per_button;
     mai_cfg->rgb.per_cab = per_cab;
+    mai_cfg->rgb.per_banner = per_banner;
 
     config_changed();
     disp_rgb();
