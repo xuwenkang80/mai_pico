@@ -22,7 +22,7 @@ typedef union {
     uint8_t raw[28];
     struct {
         uint8_t body;
-        uint8_t ext;
+        uint8_t bezel;
         uint8_t side;
     };
     struct {
@@ -251,9 +251,10 @@ static void led_cmd(cdc_t *cdc)
             }
             break;
         case 0x39:
-            DEBUG(led, "LED Fet\n");
+            DEBUG(led, "LED Cabinet %02x %02x %02x\n",
+                  cdc->led.body, cdc->led.bezel, cdc->led.side);
             rgb_set_cab(0, gray32(cdc->led.body, false));
-            rgb_set_cab(1, gray32(cdc->led.ext, false));
+            rgb_set_cab(1, gray32(cdc->led.bezel, false));
             rgb_set_cab(2, gray32(cdc->led.side, false));
             break;
 

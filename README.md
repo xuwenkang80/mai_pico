@@ -157,6 +157,7 @@ Before we start, I want to encourage you with some hobbyist builds.
 ### RGB Light
   * All RGB lights are daisy-chained in just one WS2812B chain following this order:
     * [8x Button Nodes] -> [3x Cabinet Nodes] -> [1x Banner Node] -> [1x AIME Node]
+    * 3 Cabinet Nodes are: main body, display bezel, side panel.
   * You can set chained RGB LED numbers for each node (Button, Cabinet or Banner) using `rgb` command. `0` means ignore the nodes. Note that AIME node supports up to 16 LEDs, and you can't change it.
   * If two or more RGB LEDs are connected parallelly (sharing the same input), they're considered as one node.
 
