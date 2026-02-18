@@ -9,10 +9,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
+#define MPR121_NUM        4
+#define MPR121_CH_PER    12
+#define TOUCH_CH_TOTAL   (MPR121_NUM * MPR121_CH_PER)
+
+#define TOUCH_KEY_NUM    34
+
 enum touch_keys {
     A1 = 0, A2, A3, A4, A5, A6, A7, A8,
     B1, B2, B3, B4, B5, B6, B7, B8,
-    C1, C2, D1, D2, D3, D4, D5, D6, D7, D8,
+    C1, C2, 
+    D1, D2, D3, D4, D5, D6, D7, D8,
     E1, E2, E3, E4, E5, E6, E7, E8,
     XX = 255
 };
