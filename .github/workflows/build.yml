@@ -20,14 +20,16 @@ jobs:
           sudo apt update
           sudo apt install -y cmake build-essential ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev wget tar
 
-      # 3️⃣ 创建构建目录
-      - name: Configure build
+       - name: Find CMakeLists
+        id: find_cmake
         run: |
-          mkdir -p build
-          cd build
-          cmake -G Ninja .. -DCMAKE_BUILD_TYPE=Release
+          echo "SOURCE_DIR=$(dirname $(find . -name CMakeLists.txt | head -n 1))" >> $GITHUB_ENV
 
-      # 4️⃣ 编译
+       - name: Configure build
+        run: |
+          cmake -G Ninja $SOURCE_DIR -B build -DCMAKE_BUILD_TYPE=Release
+
+
       - name: Build
         run: |
           cd build
