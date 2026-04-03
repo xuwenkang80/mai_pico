@@ -10,10 +10,15 @@ jobs:
 
     env:
       SOURCE_DIR: firmware
-      PICO_SDK_FETCH_FROM_GIT: on   # ⭐关键
+      PICO_SDK_FETCH_FROM_GIT: on
 
     steps:
       - uses: actions/checkout@v4
+        with:
+          submodules: recursive   # ⭐关键
+
+      - name: Debug file tree
+        run: ls -R
 
       - name: Install dependencies
         run: |
