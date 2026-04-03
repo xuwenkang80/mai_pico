@@ -8,37 +8,29 @@ jobs:
   build:
     runs-on: ubuntu-22.04
 
+    env:
+      SOURCE_DIR: firmware   # ← 改成你的CMakeLists所在目录
+
     steps:
-      # 1️⃣ 检出代码及 submodule
       - uses: actions/checkout@v4
         with:
           submodules: recursive
 
-      # 2️⃣ 安装依赖
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y cmake build-essential ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev wget tar
+          sudo apt install -y cmake build-essential ninja-build gcc-arm-none-eabi libnewlib-arm-none-eabi libstdc++-arm-none-eabi-dev
 
-       - name: Find CMakeLists
-        id: find_cmake
-        run: |
-          echo "SOURCE_DIR=$(dirname $(find . -name CMakeLists.txt | head -n 1))" >> $GITHUB_ENV
-
-       - name: Configure build
+      - name: Configure build
         run: |
           cmake -G Ninja $SOURCE_DIR -B build -DCMAKE_BUILD_TYPE=Release
 
-
       - name: Build
         run: |
-          cd build
-          ninja
+          cmake --build build
 
-      # 5️⃣ 上传 UF2 固件
       - name: Upload firmware
         uses: actions/upload-artifact@v4
         with:
           name: firmware.uf2
           path: build/**/*.uf2
-
