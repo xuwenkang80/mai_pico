@@ -11,6 +11,7 @@
 #include "config.h"
 #include "save.h"
 #include "touch.h"
+#include "board_defs.h"
 
 mai_cfg_t *mai_cfg;
 
@@ -56,12 +57,12 @@ static bool touch_map_valid()
 {
     uint64_t mask = 0;
     for (int i = 0; i < sizeof(mai_cfg->alt.touch); i++) {
-        if (mai_cfg->alt.touch[i] < 34) {
+        if (mai_cfg->alt.touch[i] < TOUCH_KEY_NUM) {
             mask |= 1ULL << mai_cfg->alt.touch[i];
         }
     }
     int keys = 0;
-    for (int i = 0; i < 34; i++) {
+    for (int i = 0; i < TOUCH_KEY_NUM; i++) {
         if (mask & (1ULL << i)) {
             keys++;
         }
@@ -80,7 +81,7 @@ static void config_loaded()
         mai_cfg->sense = default_cfg.sense;
         config_changed();
     }
-    for (int i = 0; i < 34; i++) {
+    for (int i = 0; i < TOUCH_KEY_NUM; i++) {
         if (!in_range(mai_cfg->sense.zones[i], -9, 9)) {
             mai_cfg->sense = default_cfg.sense;
             config_changed();

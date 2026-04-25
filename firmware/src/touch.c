@@ -10,6 +10,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdbool.h>
+#include <string.h>
 
 #include "bsp/board.h"
 #include "hardware/gpio.h"
@@ -41,8 +42,8 @@ void touch_init()
     gpio_pull_up(I2C_SDA);
     gpio_pull_up(I2C_SCL);
 
-    touch_sensor_init();    
     memcpy(touch_map, mai_cfg->alt.touch, sizeof(touch_map));
+    touch_sensor_init();
 }
 
 const char *touch_key_name(unsigned key)
@@ -51,7 +52,7 @@ const char *touch_key_name(unsigned key)
     if (key < 18) {
         name[0] = "ABC"[key / 8];
         name[1] = '1' + key % 8;
-    } else if (key < 34) {
+    } else if (key < TOUCH_KEY_NUM) {
         name[0] = "DE"[(key - 18) / 8];
         name[1] = '1' + (key - 18) % 8;
     } else {
@@ -99,10 +100,10 @@ unsigned touch_key_from_channel(unsigned channel)
     return 0xff;
 }
 
-void touch_set_map(unsigned sensor, unsigned key)
+void touch_set_map(unsigned channel, unsigned key)
 {
-    if (sensor < TOUCH_CH_TOTAL) {
-        touch_map[sensor] = key;
+    if (channel < TOUCH_CH_TOTAL) {
+        touch_map[channel] = key;
         memcpy(mai_cfg->alt.touch, touch_map, sizeof(mai_cfg->alt.touch));
         config_changed();
     }
@@ -136,7 +137,7 @@ static void touch_stat()
     uint64_t just_touched = touch_reading & ~last_reading;
     last_reading = touch_reading;
 
-    for (int i = 0; i < 34; i++) {
+    for (int i = 0; i < TOUCH_KEY_NUM; i++) {
         if (just_touched & (1ULL << i)) {
             touch_counts[i]++;
         }
@@ -173,7 +174,9 @@ const uint16_t *touch_raw()
     uint16_t buf[TOUCH_CH_TOTAL] = {0};
 
     for (int i = 0; i < MPR121_NUM; i++) {
-        sensor_ok[i] = mpr121_raw(MPR121_BASE_ADDR + i, buf + i * 12, 12);
+        sensor_ok[i] = mpr121_raw(MPR121_BASE_ADDR + i,
+                                  buf + i * MPR121_CH_PER,
+                                  MPR121_CH_PER);
     }
     memcpy(readout, buf, sizeof(readout));
 
@@ -182,10 +185,14 @@ const uint16_t *touch_raw()
 
 const uint16_t *map_raw_to_zones(const uint16_t* raw)
 {
-    static uint16_t zones[TOUCH_CH_TOTAL];
+    static uint16_t zones[TOUCH_KEY_NUM];
 
-    for (int i = 0; i < 34; i++) {
-        zones[touch_map[i]] = raw[i];
+    memset(zones, 0, sizeof(zones));
+    for (int i = 0; i < TOUCH_CH_TOTAL; i++) {
+        uint8_t key = touch_map[i];
+        if (key < TOUCH_KEY_NUM) {
+            zones[key] = raw[i];
+        }
     }
     
     return zones;
@@ -194,8 +201,9 @@ const uint16_t *map_raw_to_zones(const uint16_t* raw)
 const int8_t *unmap_sense_to_raw(const int8_t* memsense)
 {
     static int8_t outsense[TOUCH_CH_TOTAL];
-    for(int i = 0; i < TOUCH_KEY_NUM; i++) {
-        outsense[i] = memsense[touch_map[i]];
+    for(int i = 0; i < TOUCH_CH_TOTAL; i++) {
+        uint8_t key = touch_map[i];
+        outsense[i] = key < TOUCH_KEY_NUM ? memsense[key] : 0;
     }
     return outsense;
 }
@@ -235,8 +243,8 @@ void touch_update_config()
                         mai_cfg->sense.debounce_release);
         mpr121_sense(MPR121_BASE_ADDR + m,
                      mai_cfg->sense.global,
-                     (int8_t*)outsense + m * 12,
-                     m != 2 ? 12 : 10);
+                     (int8_t*)outsense + m * MPR121_CH_PER,
+                     MPR121_CH_PER);
         mpr121_filter(MPR121_BASE_ADDR + m,
                       mai_cfg->sense.filter >> 6,
                       (mai_cfg->sense.filter >> 4) & 0x03,

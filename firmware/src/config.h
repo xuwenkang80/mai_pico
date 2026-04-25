@@ -9,7 +9,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-#include "board_defs.h"
+#include "touch.h"
 
 typedef struct __attribute__((packed)) {
     struct {
@@ -21,7 +21,7 @@ typedef struct __attribute__((packed)) {
         int8_t global;
         uint8_t debounce_touch;
         uint8_t debounce_release;        
-        int8_t zones[34];
+        int8_t zones[TOUCH_KEY_NUM];
     } sense;
     struct {
         uint8_t io4 : 4;
@@ -34,7 +34,7 @@ typedef struct __attribute__((packed)) {
     } rgb;
     struct {
         uint8_t buttons[12];
-        uint8_t touch[48];
+        uint8_t touch[TOUCH_CH_TOTAL];
     } alt;
     struct {
         uint8_t mode : 4;

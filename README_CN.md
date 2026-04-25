@@ -93,7 +93,7 @@
 * 1x USB Type-C 插座（918-418K2023S40001 或 KH-TYPE-C-16P）
 * 2x 0603 5.1kohm 电阻（R20，R21）用于 USB，如果你打算直接使用 Pi Pico 上面原生的 USB 插座，那么 Type-C 插座和电阻都可以省去，焊接也会简单不少。
 
-* 3x MPR121 模块，市场上有许多类型，选择像这样的。
+* 4x MPR121 模块，市场上有许多类型，选择像这样的。
   https://www.sparkfun.com/products/retired/9695 
 
   在将 MP121 模块焊接到主 PCB 板之前，记得用小刀**切断 ADDR 和 GND 之间的微小连线**，注意绝对不要切过头。  

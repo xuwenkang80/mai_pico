@@ -93,10 +93,10 @@ static void disp_touch()
     printf("[Touch]\n");
     printf("     ADDR|_0|_1|_2|_3|_4|_5|_6|_7|_8|_9|10|11|\n");
 
-    for (int m = 0; m < 3; m++) {
+    for (int m = 0; m < MPR121_NUM; m++) {
         printf("  %d: 0x%02x|", m, MPR121_BASE_ADDR + m);
-        for (int chn = 0; chn < 12; chn++) {
-            int key = touch_key_from_channel(m * 12 + chn);
+        for (int chn = 0; chn < MPR121_CH_PER; chn++) {
+            int key = touch_key_from_channel(m * MPR121_CH_PER + chn);
             printf("%2s|", touch_key_name(key));
         }
         printf("\n");
@@ -204,20 +204,23 @@ static void handle_level(int argc, char *argv[])
     disp_rgb();
 }
 
+static void print_stat_zone(const char *title, unsigned start, unsigned num)
+{
+    printf(" %s |", title);
+    for (int i = 0; i < num; i++) {
+        printf("%6u|", touch_count(start + i));
+    }
+    printf("\n");
+}
+
 static void handle_stat(int argc, char *argv[])
 {
     if (argc == 0) {
-        for (int col = 0; col < 4; col++) {
-            printf(" %2dA |", col * 4 + 1);
-            for (int i = 0; i < 4; i++) {
-                printf("%6u|", touch_count(col * 8 + i * 2));
-            }
-            printf("\n   B |");
-            for (int i = 0; i < 4; i++) {
-                printf("%6u|", touch_count(col * 8 + i * 2 + 1));
-            }
-            printf("\n");
-        }
+        print_stat_zone("A", A1, 8);
+        print_stat_zone("B", B1, 8);
+        print_stat_zone("C", C1, 2);
+        print_stat_zone("D", D1, 8);
+        print_stat_zone("E", E1, 8);
     } else if ((argc == 1) &&
                (strncasecmp(argv[0], "reset", strlen(argv[0])) == 0)) {
         touch_reset_stat();
@@ -298,23 +301,12 @@ static void handle_filter(int argc, char *argv[])
 
 static int8_t *extract_key(const char *param)
 {
-    if (strlen(param) != 2) {
+    int key = touch_key_by_name(param);
+    if ((key < 0) || (key >= TOUCH_KEY_NUM)) {
         return NULL;
     }
 
-    int zone = param[0] - 'A';
-    int id = param[1] - '1';
-
-    if (zone < 0 || zone > 4 || id < 0 || id > 7) {
-        return NULL;
-    }
-    if ((zone == 2) && (id > 1)) {
-        return NULL; // C1 and C2 only
-    }
-
-    const int offsets[] = { 0, 8, 16, 18, 26 };
-
-    return &mai_cfg->sense.zones[offsets[zone] + id];
+    return &mai_cfg->sense.zones[key];
 }
 
 static void sense_do_op(int8_t *target, char op)
@@ -422,16 +414,18 @@ static void handle_raw()
 
     printf("Touch raw readings:\n");
 
-    printf("   Sensor: 0: %s, 1: %s 2: %s\n",
-            touch_sensor_ok(0) ? "OK" : "ERR",
-            touch_sensor_ok(1) ? "OK" : "ERR",
-            touch_sensor_ok(2) ? "OK" : "ERR");
-    
+    printf("   Sensor:");
+    for (int m = 0; m < MPR121_NUM; m++) {
+        printf(" %d: %s", m, touch_sensor_ok(m) ? "OK" : "ERR");
+    }
+    printf("\n");
+
     printf("   By Sensor:\n");
     printf("   |___1__|___2__|___3__|___4__|___5__|___6__|___7__|___8__|___9__|__10__|__11__|__12__|\n");
-    print_readings("0", raw, 12);
-    print_readings("1", raw + 12, 12);
-    print_readings("2", raw + 24, 12);
+    for (int m = 0; m < MPR121_NUM; m++) {
+        char title[2] = { '0' + m, 0 };
+        print_readings(title, raw + m * MPR121_CH_PER, MPR121_CH_PER);
+    }
 
     printf("   By Zone:\n");
     printf("   |___1__|___2__|___3__|___4__|___5__|___6__|___7__|___8__|\n");
@@ -514,13 +508,14 @@ static void handle_gpio(int argc, char *argv[])
 static void detect_touch()
 {
     bool touched = false;
-    for (int i = 0; i < 34; i++) {
+    for (int i = 0; i < TOUCH_KEY_NUM; i++) {
         if (touch_touched(i)) {
             touched = true;
             printf("Touched: %s", touch_key_name(i));
-            uint8_t pad = touch_key_channel(i);
+            int pad = touch_key_channel(i);
             if (pad >= 0) {
-                printf(" (Sensor %d, Electrode %d)\n", pad / 12, pad % 12 + 1);
+                printf(" (Sensor %d, Electrode %d)\n",
+                       pad / MPR121_CH_PER, pad % MPR121_CH_PER + 1);
             } else {
                 printf(" (nil)\n");
             }
@@ -543,27 +538,32 @@ static bool set_touch_map(int argc, char *argv[])
     int channel = cli_extract_non_neg_int(argv[1], 0);
     int key = touch_key_by_name(argv[2]);
 
-    if ((sensor < 0) || (sensor > 2) ||
-        (channel < 0) || (channel > 11) ||
+    if ((sensor < 0) || (sensor >= MPR121_NUM) ||
+        (channel < 0) || (channel >= MPR121_CH_PER) ||
         (key < 0)) {
         return false;
     }
-    touch_set_map(sensor * 12 + channel, key);
+    touch_set_map(sensor * MPR121_CH_PER + channel, key);
     return true;
+}
+
+static void print_touch_usage()
+{
+    printf("Usage: touch [<sensor> <channel> <key>]\n"
+           "  sensor: 0..%d\n"
+           " channel: 0..%d\n"
+           "     key: A1, C2, E5, etc. XX means Not Connected.)\n",
+           MPR121_NUM - 1, MPR121_CH_PER - 1);
 }
 
 static void handle_touch(int argc, char *argv[])
 {
-    const char *usage = "Usage: touch [<sensor> <channel> <key>]\n"
-                        "  sensor: 0..2\n"
-                        " channel: 0..11\n"
-                        "     key: A1, C2, E5, etc. XX means Not Connected.)\n";
     if (argc == 0) {
         detect_touch();
     } else if (set_touch_map(argc, argv)) {
         disp_touch();
     } else {
-        printf(usage);
+        print_touch_usage();
     }
 }
 

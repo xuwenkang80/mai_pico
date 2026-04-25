@@ -91,7 +91,7 @@ Before we start, I want to encourage you with some hobbyist builds.
   <img src="doc/solder_usb_txrx.jpg" width="60%">
 * 1x USB Type-C socket (918-418K2023S40001 or KH-TYPE-C-16P)
 * 2x 0603 5.1kohm resistors (R20, R21) for USB. If you plan to use the native USB socket on the Pi Pico directly, then the Type-C socket and resistors can be omitted, making the soldering much simpler.
-* 3x MPR121 modules, there're many types in the market, choose ones like this.  
+* 4x MPR121 modules, there're many types in the market, choose ones like this.
   https://www.sparkfun.com/products/retired/9695  
   Before solder MP121 module to the main PCB board, remember to use a knife to **cut (unshort) the tiny trace that connects ADDR to the GND**. Please be careful not to cut more than necessary.  
   <img src="doc/mpr121_cut.png" width="40%">
