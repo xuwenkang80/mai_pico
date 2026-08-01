@@ -26,11 +26,11 @@
     /* Sensor 0, electrodes 0..11 */ \
     A8, B8, D8, E8, A7, B7, D7, E7, XX, XX, XX, XX, \
     /* Sensor 1, electrodes 0..11 */ \
-    A6, B6, C2, D6, E6, A5, B5, D5, E5, XX, XX, XX \
+    A6, B6, C2, D6, E6, A5, B5, D5, E5, XX, XX, XX, \
     /* Sensor 2, electrodes 0..11 */ \
     A4, B4, D4, E4, A3, B3, D3, E3, C1, XX, XX, XX, \
     /* Sensor 3, electrodes 0..11 */ \ 
-    A2, B2, D2, E2, A1, B1, D1, E1, XX, XX, XX, XX, \
+    A2, B2, D2, E2, A1, B1, D1, E1, XX, XX, XX, XX \
 }
 #else
 
