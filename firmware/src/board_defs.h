@@ -29,7 +29,7 @@
     A6, B6, C2, D6, E6, A5, B5, D5, E5, XX, XX, XX, \
     /* Sensor 2, electrodes 0..11 */ \
     A4, B4, D4, E4, A3, B3, D3, E3, C1, XX, XX, XX, \
-    /* Sensor 3, electrodes 0..11 */ \ 
+    /* Sensor 3, electrodes 0..11 */ \
     A2, B2, D2, E2, A1, B1, D1, E1, XX, XX, XX, XX \
 }
 #else
